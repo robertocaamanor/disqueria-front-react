@@ -1,0 +1,76 @@
+{
+    "common": {
+        "loading": "Loading...",
+        "cancel": "Cancel",
+        "confirm": "Confirm",
+        "required": "Required",
+        "success": "Success",
+        "error": "Error",
+        "add": "Add",
+        "create": "Create",
+        "buy": "Buy",
+        "price": "Price",
+        "year": "Year",
+        "genre": "Genre",
+        "country": "Country"
+    },
+    "auth": {
+        "loginTitle": "Welcome Back",
+        "registerTitle": "Create Account",
+        "email": "Email",
+        "password": "Password",
+        "confirmPassword": "Confirm Password",
+        "name": "Full Name",
+        "signIn": "Sign In",
+        "signUp": "Sign Up",
+        "signingIn": "Signing in...",
+        "signingUp": "Signing up...",
+        "noAccount": "Don't have an account?",
+        "hasAccount": "Already have an account?",
+        "invalidCredentials": "Invalid credentials",
+        "passwordsDoNotMatch": "Passwords do not match",
+        "logout": "Logout"
+    },
+    "nav": {
+        "catalog": "Catalog",
+        "orders": "My Orders",
+        "appName": "Disquería"
+    },
+    "catalog": {
+        "title": "Music Catalog",
+        "subtitle": "Explore artists and their albums",
+        "addArtist": "Add Artist",
+        "addAlbum": "Add Album",
+        "noAlbums": "No albums yet.",
+        "buyNow": "Buy Now"
+    },
+    "orders": {
+        "title": "My Orders",
+        "noOrders": "No orders found.",
+        "browseCatalog": "Browse Catalog to Create Order",
+        "orderNumber": "Order #",
+        "date": "Date",
+        "count": "Quantity"
+    },
+    "modals": {
+        "addArtistTitle": "Add New Artist",
+        "artistName": "Artist Name",
+        "createArtist": "Create Artist",
+        "creating": "Creating...",
+        "addAlbumTitle": "Add New Album",
+        "albumTitle": "Album Title",
+        "selectArtist": "Select Artist",
+        "artist": "Artist",
+        "artistCreated": "Artist created successfully!",
+        "albumCreated": "Album created successfully!",
+        "fillAllFields": "Please fill in all required fields",
+        "positiveValues": "Year and Price must be positive values",
+        "confirmPurchaseTitle": "Confirm Purchase",
+        "confirmPurchaseMessage": "Are you sure you want to buy \"{{title}}\" for ${{price}}?",
+        "confirmButton": "Buy Now",
+        "processing": "Processing...",
+        "orderPlaced": "Order placed successfully!",
+        "orderFailed": "Failed to place order",
+        "userIdNotFound": "User ID not found. Please re-login."
+    }
+}

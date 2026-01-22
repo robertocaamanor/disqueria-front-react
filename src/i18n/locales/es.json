@@ -1,0 +1,76 @@
+{
+    "common": {
+        "loading": "Cargando...",
+        "cancel": "Cancelar",
+        "confirm": "Confirmar",
+        "required": "Requerido",
+        "success": "Éxito",
+        "error": "Error",
+        "add": "Añadir",
+        "create": "Crear",
+        "buy": "Comprar",
+        "price": "Precio",
+        "year": "Año",
+        "genre": "Género",
+        "country": "País"
+    },
+    "auth": {
+        "loginTitle": "Bienvenido de nuevo",
+        "registerTitle": "Crear Cuenta",
+        "email": "Correo Electrónico",
+        "password": "Contraseña",
+        "confirmPassword": "Confirmar Contraseña",
+        "name": "Nombre Completo",
+        "signIn": "Iniciar Sesión",
+        "signUp": "Registrarse",
+        "signingIn": "Iniciando sesión...",
+        "signingUp": "Registrando...",
+        "noAccount": "¿No tienes una cuenta?",
+        "hasAccount": "¿Ya tienes una cuenta?",
+        "invalidCredentials": "Credenciales inválidas",
+        "passwordsDoNotMatch": "Las contraseñas no coinciden",
+        "logout": "Cerrar Sesión"
+    },
+    "nav": {
+        "catalog": "Catálogo",
+        "orders": "Mis Órdenes",
+        "appName": "Disquería"
+    },
+    "catalog": {
+        "title": "Catálogo de Música",
+        "subtitle": "Explora artistas y sus álbumes",
+        "addArtist": "Añadir Artista",
+        "addAlbum": "Añadir Álbum",
+        "noAlbums": "Aún no hay álbumes.",
+        "buyNow": "Comprar Ahora"
+    },
+    "orders": {
+        "title": "Mis Órdenes",
+        "noOrders": "No se encontraron órdenes.",
+        "browseCatalog": "Explorar Catálogo para Crear Orden",
+        "orderNumber": "Orden #",
+        "date": "Fecha",
+        "count": "Cantidad"
+    },
+    "modals": {
+        "addArtistTitle": "Añadir Nuevo Artista",
+        "artistName": "Nombre del Artista",
+        "createArtist": "Crear Artista",
+        "creating": "Creando...",
+        "addAlbumTitle": "Añadir Nuevo Álbum",
+        "albumTitle": "Título del Álbum",
+        "selectArtist": "Seleccionar Artista",
+        "artist": "Artista",
+        "artistCreated": "¡Artista creado exitosamente!",
+        "albumCreated": "¡Álbum creado exitosamente!",
+        "fillAllFields": "Por favor completa todos los campos requeridos",
+        "positiveValues": "Año y Precio deben ser valores positivos",
+        "confirmPurchaseTitle": "Confirmar Compra",
+        "confirmPurchaseMessage": "¿Estás seguro de que quieres comprar \"{{title}}\" por ${{price}}?",
+        "confirmButton": "Comprar Ahora",
+        "processing": "Procesando...",
+        "orderPlaced": "¡Orden realizada exitosamente!",
+        "orderFailed": "Error al realizar la orden",
+        "userIdNotFound": "ID de usuario no encontrado. Por favor inicia sesión nuevamente."
+    }
+}
