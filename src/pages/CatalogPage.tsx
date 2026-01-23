@@ -107,7 +107,9 @@ export const CatalogPage = () => {
     };
 
     const handleDeleteArtist = (artist: any) => {
-        setArtistToDelete(artist);
+        // Contar cuántos álbumes tiene el artista
+        const artistAlbums = albums.filter(a => a.artist?.id === artist.id);
+        setArtistToDelete({ ...artist, albumCount: artistAlbums.length });
         setIsDeleteArtistModalOpen(true);
     };
 
@@ -393,6 +395,7 @@ export const CatalogPage = () => {
                 cancelText={t('common.cancel')}
                 isLoading={isDeleting}
                 variant="danger"
+                warningMessage={artistToDelete?.albumCount > 0 ? t('modals.cascadeDeleteWarning', { count: artistToDelete.albumCount }) : undefined}
             />
 
             <ConfirmationModal

@@ -89,9 +89,10 @@
         "albumUpdated": "¡Álbum actualizado exitosamente!",
         "leaveEmptyToKeep": "Dejar vacío para mantener la imagen actual",
         "confirmDeleteArtistTitle": "Eliminar Artista",
-        "confirmDeleteArtistMessage": "¿Estás seguro de que quieres eliminar al artista '{{name}}'? Esto también eliminará todos sus álbumes.",
+        "confirmDeleteArtistMessage": "¿Estás seguro de que quieres eliminar al artista '{{name}}'?",
         "confirmDeleteAlbumTitle": "Eliminar Álbum",
         "confirmDeleteAlbumMessage": "¿Estás seguro de que quieres eliminar el álbum '{{title}}'?",
+        "cascadeDeleteWarning": "⚠️ Advertencia: Esto también eliminará {{count}} álbum(es) asociado(s) a este artista.",
         "artistDeleted": "¡Artista eliminado exitosamente!",
         "albumDeleted": "¡Álbum eliminado exitosamente!"
     }

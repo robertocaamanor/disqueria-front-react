@@ -12,6 +12,7 @@ interface ConfirmationModalProps {
     cancelText?: string;
     isLoading?: boolean;
     variant?: 'default' | 'danger';
+    warningMessage?: string;
 }
 
 export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
@@ -23,7 +24,8 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
     confirmText = 'Confirm',
     cancelText = 'Cancel',
     isLoading = false,
-    variant = 'default'
+    variant = 'default',
+    warningMessage
 }) => {
     if (!isOpen) return null;
 
@@ -47,6 +49,17 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
                     </div>
                     <h2 className="text-xl font-bold text-white mb-2">{title}</h2>
                     <p className="text-gray-400 text-sm">{message}</p>
+                    
+                    {warningMessage && (
+                        <div className="mt-4 w-full p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/30">
+                            <div className="flex items-start gap-2">
+                                <AlertTriangle className="w-4 h-4 text-yellow-500 flex-shrink-0 mt-0.5" />
+                                <p className="text-xs text-yellow-400 text-left font-medium">
+                                    {warningMessage}
+                                </p>
+                            </div>
+                        </div>
+                    )}
                 </div>
 
                 <div className="flex gap-3">
