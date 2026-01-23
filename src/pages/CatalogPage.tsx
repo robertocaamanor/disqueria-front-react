@@ -115,6 +115,9 @@ export const CatalogPage = () => {
                     <Button onClick={() => setIsArtistModalOpen(true)} size="sm">
                         <Plus className="w-4 h-4 mr-2" /> {t('catalog.addArtist')}
                     </Button>
+                    <Button onClick={() => openAddAlbumModal()} size="sm">
+                        <Plus className="w-4 h-4 mr-2" /> {t('catalog.addAlbum')}
+                    </Button>
                 </div>
             </div>
 
