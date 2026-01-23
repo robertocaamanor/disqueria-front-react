@@ -38,8 +38,9 @@ export const CatalogPage = () => {
                 getArtists(),
                 getAlbums()
             ]);
-            setArtists(artistsData);
-            setAlbums(albumsData);
+            // Ordenar por ID ascendente
+            setArtists(artistsData.sort((a: any, b: any) => a.id - b.id));
+            setAlbums(albumsData.sort((a: any, b: any) => a.id - b.id));
         } catch (error) {
             console.error('Error fetching catalog:', error);
         } finally {
@@ -222,7 +223,9 @@ export const CatalogPage = () => {
                     </div>
                 ) : (
                     filteredArtists.map((artist) => {
-                        const artistAlbums = albums.filter(a => a.artist?.id === artist.id);
+                        const artistAlbums = albums
+                            .filter(a => a.artist?.id === artist.id)
+                            .sort((a, b) => a.id - b.id);
                         const matchesSearchTerm = (text: string) => text.toLowerCase().includes(searchTerm.toLowerCase());
 
                         return (
