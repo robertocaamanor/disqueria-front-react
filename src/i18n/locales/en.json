@@ -42,7 +42,10 @@
         "addArtist": "Add Artist",
         "addAlbum": "Add Album",
         "noAlbums": "No albums yet.",
-        "buyNow": "Buy Now"
+        "buyNow": "Buy Now",
+        "searchPlaceholder": "Search by artist or album...",
+        "searchResults": "{{count}} artist(s) found",
+        "noResults": "No artists or albums match your search"
     },
     "orders": {
         "title": "My Orders",
