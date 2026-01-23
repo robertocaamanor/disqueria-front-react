@@ -38,6 +38,7 @@ export const Toast: React.FC<ToastProps> = ({ id, message, type, onClose }) => {
             <button
                 onClick={() => onClose(id)}
                 className="ml-auto text-gray-400 hover:text-white transition-colors"
+                aria-label="Close"
             >
                 <X className="w-4 h-4" />
             </button>
