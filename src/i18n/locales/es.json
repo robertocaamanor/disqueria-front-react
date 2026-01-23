@@ -17,7 +17,9 @@
         "edit": "Editar",
         "delete": "Eliminar",
         "stock": "Stock",
-        "coverImage": "Imagen de Portada"
+        "coverImage": "Imagen de Portada",
+        "previous": "Anterior",
+        "next": "Siguiente"
     },
     "auth": {
         "loginTitle": "Bienvenido de nuevo",

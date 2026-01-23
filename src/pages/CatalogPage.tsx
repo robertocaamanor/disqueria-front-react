@@ -10,7 +10,7 @@ import { EditArtistModal } from '../components/catalog/EditArtistModal';
 import { EditAlbumModal } from '../components/catalog/EditAlbumModal';
 import { ConfirmationModal } from '../components/ui/ConfirmationModal';
 import { useTranslation } from 'react-i18next';
-import { Plus, Music, Disc, Loader2, ShoppingCart, Search, X, Pencil, Trash2 } from 'lucide-react';
+import { Plus, Music, Disc, Loader2, ShoppingCart, Search, X, Pencil, Trash2, ChevronLeft, ChevronRight } from 'lucide-react';
 
 export const CatalogPage = () => {
     const { t } = useTranslation();
@@ -23,6 +23,8 @@ export const CatalogPage = () => {
     const [editingArtist, setEditingArtist] = useState<any | null>(null);
     const [editingAlbum, setEditingAlbum] = useState<any | null>(null);
     const [selectedArtistId, setSelectedArtistId] = useState<number | null>(null);
+    const [currentPage, setCurrentPage] = useState(1);
+    const artistsPerPage = 9;
     const { user } = useAuth();
     const { showToast } = useToast();
 
@@ -61,6 +63,17 @@ export const CatalogPage = () => {
         );
         return matchesArtist || hasMatchingAlbum;
     });
+
+    // Calcular paginación
+    const totalPages = Math.ceil(filteredArtists.length / artistsPerPage);
+    const startIndex = (currentPage - 1) * artistsPerPage;
+    const endIndex = startIndex + artistsPerPage;
+    const paginatedArtists = filteredArtists.slice(startIndex, endIndex);
+
+    // Resetear a la primera página cuando cambie la búsqueda
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [searchTerm]);
 
     // ... rest of component
     const [isBuyModalOpen, setIsBuyModalOpen] = useState(false);
@@ -218,13 +231,13 @@ export const CatalogPage = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredArtists.length === 0 ? (
+                {paginatedArtists.length === 0 ? (
                     <div className="col-span-full text-center py-12">
                         <Music className="w-16 h-16 text-gray-600 mx-auto mb-4" />
                         <p className="text-gray-400">{t('catalog.noResults')}</p>
                     </div>
                 ) : (
-                    filteredArtists.map((artist) => {
+                    paginatedArtists.map((artist) => {
                         const artistAlbums = albums
                             .filter(a => a.artist?.id === artist.id)
                             .sort((a, b) => a.id - b.id);
@@ -344,6 +357,47 @@ export const CatalogPage = () => {
                     })
                 )}
             </div>
+
+            {/* Controles de paginación */}
+            {filteredArtists.length > artistsPerPage && (
+                <div className="flex items-center justify-center gap-2 mt-8">
+                    <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                        disabled={currentPage === 1}
+                        className="disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        <ChevronLeft className="w-4 h-4 mr-1" />
+                        {t('common.previous')}
+                    </Button>
+                    
+                    <div className="flex items-center gap-2">
+                        {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                            <Button
+                                key={page}
+                                size="sm"
+                                variant={currentPage === page ? 'primary' : 'ghost'}
+                                onClick={() => setCurrentPage(page)}
+                                className={`w-8 h-8 p-0 ${currentPage === page ? 'bg-primary-500 text-white' : ''}`}
+                            >
+                                {page}
+                            </Button>
+                        ))}
+                    </div>
+
+                    <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                        disabled={currentPage === totalPages}
+                        className="disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        {t('common.next')}
+                        <ChevronRight className="w-4 h-4 ml-1" />
+                    </Button>
+                </div>
+            )}
 
             <CreateArtistModal
                 isOpen={isArtistModalOpen}
