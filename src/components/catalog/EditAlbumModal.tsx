@@ -1,20 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { createAlbum } from '../../api/catalog';
+import { updateAlbum } from '../../api/catalog';
 import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
 import { X } from 'lucide-react';
 import { useToast } from '../../context/ToastContext';
 import { useTranslation } from 'react-i18next';
 
-interface CreateAlbumModalProps {
+interface EditAlbumModalProps {
     isOpen: boolean;
     onClose: () => void;
     onSuccess: () => void;
+    album: any | null; // using any for simplicity, effectively defines the shape below
     artists: any[];
-    preSelectedArtistId?: number | null;
 }
 
-export const CreateAlbumModal: React.FC<CreateAlbumModalProps> = ({ isOpen, onClose, onSuccess, artists, preSelectedArtistId }) => {
+export const EditAlbumModal: React.FC<EditAlbumModalProps> = ({ isOpen, onClose, onSuccess, album, artists }) => {
     const { t } = useTranslation();
     const { showToast } = useToast();
     const [title, setTitle] = useState('');
@@ -27,14 +27,18 @@ export const CreateAlbumModal: React.FC<CreateAlbumModalProps> = ({ isOpen, onCl
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        if (preSelectedArtistId) {
-            setArtistId(preSelectedArtistId.toString());
-        } else {
-            setArtistId('');
+        if (isOpen && album) {
+            setTitle(album.title);
+            setYear(album.year.toString());
+            setGenre(album.genre);
+            setPrice(album.price.toString());
+            setStock(album.stock ? album.stock.toString() : '0');
+            setArtistId(album.artist?.id?.toString() || album.artistId?.toString() || '');
+            setCoverImage(null); // Reset file input
         }
-    }, [preSelectedArtistId, isOpen]);
+    }, [isOpen, album]);
 
-    if (!isOpen) return null;
+    if (!isOpen || !album) return null;
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -61,26 +65,20 @@ export const CreateAlbumModal: React.FC<CreateAlbumModalProps> = ({ isOpen, onCl
             formData.append('genre', genre.trim());
             formData.append('price', priceNum.toString());
             formData.append('stock', stockNum.toString());
+            // Only append artistId if it changed or needs to be sent? Usually API expects it.
             formData.append('artistId', artistId);
+
             if (coverImage) {
                 formData.append('coverImage', coverImage);
             }
 
-            await createAlbum(formData);
+            await updateAlbum(album.id, formData);
 
-            showToast(t('modals.albumCreated'), 'success');
+            showToast(t('modals.albumUpdated'), 'success'); // Key needs adding
             onSuccess();
             onClose();
-            // Reset form
-            setTitle('');
-            setYear('');
-            setGenre('');
-            setPrice('');
-            setStock('0');
-            setArtistId('');
-            setCoverImage(null);
         } catch (error) {
-            console.error('Failed to create album', error);
+            console.error('Failed to update album', error);
             showToast(t('common.error'), 'error');
         } finally {
             setLoading(false);
@@ -94,17 +92,16 @@ export const CreateAlbumModal: React.FC<CreateAlbumModalProps> = ({ isOpen, onCl
                     <X className="w-5 h-5" />
                 </button>
 
-                <h2 className="text-xl font-bold mb-4 text-white">{t('modals.addAlbumTitle')}</h2>
+                <h2 className="text-xl font-bold mb-4 text-white">{t('modals.editAlbumTitle')}</h2>
 
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
                         <label className="block text-sm font-medium text-gray-300 mb-1">{t('modals.artist')}</label>
                         <select
-                            className="w-full h-10 rounded-md border border-gray-700 bg-gray-800 px-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="w-full h-10 rounded-md border border-gray-700 bg-gray-800 px-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-primary-500"
                             value={artistId}
                             onChange={(e) => setArtistId(e.target.value)}
                             required
-                            disabled={!!preSelectedArtistId}
                         >
                             <option value="">{t('modals.selectArtist')}</option>
                             {artists.map((artist) => (
@@ -118,7 +115,6 @@ export const CreateAlbumModal: React.FC<CreateAlbumModalProps> = ({ isOpen, onCl
                         value={title}
                         onChange={(e) => setTitle(e.target.value)}
                         required
-                        placeholder="e.g. Abbey Road"
                     />
 
                     <div className="grid grid-cols-2 gap-4">
@@ -129,7 +125,6 @@ export const CreateAlbumModal: React.FC<CreateAlbumModalProps> = ({ isOpen, onCl
                             value={year}
                             onChange={(e) => setYear(e.target.value)}
                             required
-                            placeholder="1969"
                         />
                         <Input
                             label={t('common.price')}
@@ -139,7 +134,6 @@ export const CreateAlbumModal: React.FC<CreateAlbumModalProps> = ({ isOpen, onCl
                             value={price}
                             onChange={(e) => setPrice(e.target.value)}
                             required
-                            placeholder="0.00"
                         />
                     </div>
 
@@ -148,7 +142,6 @@ export const CreateAlbumModal: React.FC<CreateAlbumModalProps> = ({ isOpen, onCl
                         value={genre}
                         onChange={(e) => setGenre(e.target.value)}
                         required
-                        placeholder="e.g. Rock"
                     />
 
                     <Input
@@ -158,11 +151,15 @@ export const CreateAlbumModal: React.FC<CreateAlbumModalProps> = ({ isOpen, onCl
                         value={stock}
                         onChange={(e) => setStock(e.target.value)}
                         required
-                        placeholder="0"
                     />
 
                     <div>
                         <label className="block text-sm font-medium text-gray-300 mb-1">{t('common.coverImage')}</label>
+                        {album && album.coverImage && (
+                            <div className="mb-2">
+                                <span className="text-xs text-gray-500 block mb-1">Current: {album.coverImage}</span>
+                            </div>
+                        )}
                         <input
                             type="file"
                             accept="image/*"
@@ -175,12 +172,13 @@ export const CreateAlbumModal: React.FC<CreateAlbumModalProps> = ({ isOpen, onCl
                             hover:file:bg-primary-700
                             "
                         />
+                        <span className="text-xs text-gray-500 mt-1 block">{t('modals.leaveEmptyToKeep')}</span>
                     </div>
 
                     <div className="flex justify-end gap-3 mt-6">
                         <Button type="button" variant="ghost" onClick={onClose}>{t('common.cancel')}</Button>
                         <Button type="submit" disabled={loading}>
-                            {loading ? t('modals.creating') : t('common.create')}
+                            {loading ? t('modals.saving') : t('common.save')}
                         </Button>
                     </div>
                 </form>

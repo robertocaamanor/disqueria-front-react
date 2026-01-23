@@ -1,14 +1,16 @@
 import { useEffect, useState } from 'react';
-import { getArtists, getAlbums } from '../api/catalog';
+import { getArtists, getAlbums, deleteArtist, deleteAlbum } from '../api/catalog';
 import { createOrder } from '../api/orders';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { Button } from '../components/ui/Button';
 import { CreateArtistModal } from '../components/catalog/CreateArtistModal';
 import { CreateAlbumModal } from '../components/catalog/CreateAlbumModal';
+import { EditArtistModal } from '../components/catalog/EditArtistModal';
+import { EditAlbumModal } from '../components/catalog/EditAlbumModal';
 import { ConfirmationModal } from '../components/ui/ConfirmationModal';
 import { useTranslation } from 'react-i18next';
-import { Plus, Music, Disc, Loader2, ShoppingCart, Search, X } from 'lucide-react';
+import { Plus, Music, Disc, Loader2, ShoppingCart, Search, X, Pencil, Trash2 } from 'lucide-react';
 
 export const CatalogPage = () => {
     const { t } = useTranslation();
@@ -18,6 +20,8 @@ export const CatalogPage = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [isArtistModalOpen, setIsArtistModalOpen] = useState(false);
     const [isAlbumModalOpen, setIsAlbumModalOpen] = useState(false);
+    const [editingArtist, setEditingArtist] = useState<any | null>(null);
+    const [editingAlbum, setEditingAlbum] = useState<any | null>(null);
     const [selectedArtistId, setSelectedArtistId] = useState<number | null>(null);
     const { user } = useAuth();
     const { showToast } = useToast();
@@ -51,7 +55,7 @@ export const CatalogPage = () => {
     const filteredArtists = artists.filter(artist => {
         const matchesArtist = artist.name.toLowerCase().includes(searchTerm.toLowerCase());
         const artistAlbums = albums.filter(a => a.artist?.id === artist.id);
-        const hasMatchingAlbum = artistAlbums.some(album => 
+        const hasMatchingAlbum = artistAlbums.some(album =>
             album.title.toLowerCase().includes(searchTerm.toLowerCase())
         );
         return matchesArtist || hasMatchingAlbum;
@@ -61,6 +65,11 @@ export const CatalogPage = () => {
     const [isBuyModalOpen, setIsBuyModalOpen] = useState(false);
     const [selectedAlbumToBuy, setSelectedAlbumToBuy] = useState<any>(null);
     const [isBuying, setIsBuying] = useState(false);
+    const [isDeleteArtistModalOpen, setIsDeleteArtistModalOpen] = useState(false);
+    const [artistToDelete, setArtistToDelete] = useState<any>(null);
+    const [isDeleteAlbumModalOpen, setIsDeleteAlbumModalOpen] = useState(false);
+    const [albumToDelete, setAlbumToDelete] = useState<any>(null);
+    const [isDeleting, setIsDeleting] = useState(false);
 
     const handleBuyAlbum = (album: any) => {
         setSelectedAlbumToBuy(album);
@@ -87,11 +96,68 @@ export const CatalogPage = () => {
             showToast(t('modals.orderPlaced'), 'success');
             setIsBuyModalOpen(false);
             setSelectedAlbumToBuy(null);
+            fetchData();
         } catch (error) {
             console.error(error);
             showToast(t('modals.orderFailed'), 'error');
         } finally {
             setIsBuying(false);
+        }
+    };
+
+    const handleDeleteArtist = (artist: any) => {
+        setArtistToDelete(artist);
+        setIsDeleteArtistModalOpen(true);
+    };
+
+    const confirmDeleteArtist = async () => {
+        if (!artistToDelete) return;
+
+        setIsDeleting(true);
+        try {
+            await deleteArtist(artistToDelete.id);
+            showToast(t('modals.artistDeleted'), 'success');
+            setIsDeleteArtistModalOpen(false);
+            setArtistToDelete(null);
+            fetchData();
+        } catch (error) {
+            console.error(error);
+            showToast(t('common.error'), 'error');
+        } finally {
+            setIsDeleting(false);
+        }
+    };
+
+    const handleDeleteAlbum = (album: any) => {
+        setAlbumToDelete(album);
+        setIsDeleteAlbumModalOpen(true);
+    };
+
+    const confirmDeleteAlbum = async () => {
+        if (!albumToDelete) return;
+
+        setIsDeleting(true);
+        try {
+            await deleteAlbum(albumToDelete.id);
+            showToast(t('modals.albumDeleted'), 'success');
+            setIsDeleteAlbumModalOpen(false);
+            setAlbumToDelete(null);
+            fetchData();
+        } catch (error) {
+            console.error(error);
+            showToast(t('common.error'), 'error');
+        } finally {
+            setIsDeleting(false);
+        }
+    };
+
+    const getStockBadge = (stock: number) => {
+        if (stock === 0) {
+            return <span className="text-xs font-semibold px-2 py-1 rounded-full bg-red-500/20 text-red-400 border border-red-500/30">{t('catalog.outOfStock')}</span>;
+        } else if (stock < 10) {
+            return <span className="text-xs font-semibold px-2 py-1 rounded-full bg-yellow-500/20 text-yellow-400 border border-yellow-500/30">{stock} {t('catalog.inStock')}</span>;
+        } else {
+            return <span className="text-xs font-semibold px-2 py-1 rounded-full bg-green-500/20 text-green-400 border border-green-500/30">{stock} {t('catalog.inStock')}</span>;
         }
     };
 
@@ -159,70 +225,117 @@ export const CatalogPage = () => {
                         const artistAlbums = albums.filter(a => a.artist?.id === artist.id);
                         const matchesSearchTerm = (text: string) => text.toLowerCase().includes(searchTerm.toLowerCase());
 
-                    return (
-                        <div key={artist.id} className="bg-slate-900/50 border border-white/5 rounded-xl overflow-hidden hover:border-primary-500/30 transition-all hover:bg-slate-900/80 group">
-                            <div className="p-4 border-b border-white/5 bg-gradient-to-r from-white/5 to-transparent flex items-center justify-between">
-                                <div className="flex items-center gap-2">
-                                    <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                                        <Music className="w-4 h-4 text-primary-500" />
-                                        {artist.name}
-                                    </h3>
-                                    {artist.country && (
-                                        <span className="text-[10px] font-medium text-gray-500 bg-white/5 px-1.5 py-0.5 rounded-full">{artist.country}</span>
-                                    )}
-                                </div>
-                                <Button
-                                    size="sm"
-                                    variant="ghost"
-                                    className="h-7 px-2 text-xs"
-                                    onClick={() => openAddAlbumModal(artist.id)}
-                                >
-                                    <Plus className="w-3 h-3 mr-1" /> {t('catalog.addAlbum')}
-                                </Button>
-                            </div>
-
-                            <div className="p-6 space-y-4">
-                                {artistAlbums.length === 0 ? (
-                                    <p className="text-sm text-gray-500 italic">{t('catalog.noAlbums')}</p>
-                                ) : (
-                                    <div className="space-y-3">
-                                        {artistAlbums.map((album) => {
-                                            const isHighlighted = searchTerm && matchesSearchTerm(album.title);
-                                            return (
-                                                <div 
-                                                    key={album.id} 
-                                                    className={`flex items-center justify-between p-3 rounded-lg transition-all ${
-                                                        isHighlighted 
-                                                            ? 'bg-primary-500/10 border border-primary-500/30 hover:bg-primary-500/20' 
-                                                            : 'bg-black/20 hover:bg-black/40'
-                                                    }`}
-                                                >
-                                                    <div className="flex items-center gap-3">
-                                                        <div className="w-10 h-10 rounded bg-slate-800 flex items-center justify-center text-gray-500">
-                                                            <Disc className="w-5 h-5" />
-                                                        </div>
-                                                        <div>
-                                                            <p className={`font-medium ${
-                                                                isHighlighted ? 'text-primary-300' : 'text-white'
-                                                            }`}>{album.title}</p>
-                                                            <p className="text-xs text-gray-400">{album.year} • {album.genre}</p>
-                                                        </div>
-                                                    </div>
-
-                                                    <div className="flex items-center gap-3">
-                                                        <span className="font-bold text-primary-400">${album.price}</span>
-                                                        <Button size="sm" variant="ghost" className="h-8 w-8 p-0 text-gray-400 hover:text-white" onClick={() => handleBuyAlbum(album)} title={t('catalog.buyNow')}>
-                                                            <ShoppingCart className="w-4 h-4" />
-                                                        </Button>
-                                                    </div>
-                                                </div>
-                                            );
-                                        })}
+                        return (
+                            <div key={artist.id} className="bg-slate-900/50 border border-white/5 rounded-xl overflow-hidden hover:border-primary-500/30 transition-all hover:bg-slate-900/80 group">
+                                <div className="p-4 border-b border-white/5 bg-gradient-to-r from-white/5 to-transparent flex items-center justify-between">
+                                    <div className="flex items-center gap-2">
+                                        <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                                            <Music className="w-4 h-4 text-primary-500" />
+                                            {artist.name}
+                                        </h3>
+                                        {artist.country && (
+                                            <span className="text-[10px] font-medium text-gray-500 bg-white/5 px-1.5 py-0.5 rounded-full">{artist.country}</span>
+                                        )}
                                     </div>
-                                )}
+                                    <Button
+                                        size="sm"
+                                        variant="ghost"
+                                        className="h-7 px-2 text-xs"
+                                        onClick={() => openAddAlbumModal(artist.id)}
+                                    >
+                                        <Plus className="w-3 h-3 mr-1" /> {t('catalog.addAlbum')}
+                                    </Button>
+                                </div>
+
+                                <div className="p-6 space-y-4">
+                                    {artistAlbums.length === 0 ? (
+                                        <p className="text-sm text-gray-500 italic">{t('catalog.noAlbums')}</p>
+                                    ) : (
+                                        <div className="space-y-3">
+                                            {artistAlbums.map((album) => {
+                                                const isHighlighted = searchTerm && matchesSearchTerm(album.title);
+                                                return (
+                                                    <div
+                                                        key={album.id}
+                                                        className={`flex items-start gap-3 p-3 rounded-lg transition-all ${isHighlighted
+                                                            ? 'bg-primary-500/10 border border-primary-500/30 hover:bg-primary-500/20'
+                                                            : 'bg-black/20 hover:bg-black/40'
+                                                            }`}
+                                                    >
+                                                        <div className="flex-shrink-0">
+                                                            {album.coverImage ? (
+                                                                <img 
+                                                                    src={`http://localhost:3005/${album.coverImage}`} 
+                                                                    alt={album.title}
+                                                                    className="w-16 h-16 rounded object-cover"
+                                                                />
+                                                            ) : (
+                                                                <div className="w-16 h-16 rounded bg-slate-800 flex items-center justify-center text-gray-500">
+                                                                    <Disc className="w-10 h-10" />
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                        
+                                                        <div className="flex-1 min-w-0">
+                                                            <p className={`font-medium truncate ${isHighlighted ? 'text-primary-300' : 'text-white'
+                                                                }`}>{album.title}</p>
+                                                            <p className="text-xs text-gray-400">{album.year} • {album.genre}</p>
+                                                            <div className="mt-1">
+                                                                {getStockBadge(album.stock)}
+                                                            </div>
+                                                        </div>
+
+                                                        <div className="flex flex-col items-end gap-2 flex-shrink-0">
+                                                            <span className="font-bold text-primary-400">${album.price}</span>
+                                                            <div className="flex items-center gap-1">
+                                                                <Button size="sm" variant="ghost" className="h-8 w-8 p-0 text-gray-400 hover:text-blue-400" onClick={() => setEditingAlbum(album)} title={t('common.edit')}>
+                                                                    <Pencil className="w-5 h-5" />
+                                                                </Button>
+                                                                <Button size="sm" variant="ghost" className="h-8 w-8 p-0 text-gray-400 hover:text-red-400" onClick={() => handleDeleteAlbum(album)} title={t('common.delete')}>
+                                                                    <Trash2 className="w-5 h-5" />
+                                                                </Button>
+                                                                <Button 
+                                                                    size="sm" 
+                                                                    variant="ghost" 
+                                                                    className="h-8 w-8 p-0 text-gray-400 hover:text-green-400" 
+                                                                    onClick={() => handleBuyAlbum(album)} 
+                                                                    title={t('catalog.buyNow')}
+                                                                    disabled={album.stock === 0}
+                                                                >
+                                                                    <ShoppingCart className="w-5 h-5" />
+                                                                </Button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    )}
+                                    
+                                    {/* Botones de editar y eliminar artista */}
+                                    <div className="flex items-center justify-end gap-2 pt-2 border-t border-white/5">
+                                        <Button
+                                            size="sm"
+                                            variant="ghost"
+                                            className="text-xs text-gray-400 hover:text-blue-400"
+                                            onClick={() => setEditingArtist(artist)}
+                                        >
+                                            <Pencil className="w-3 h-3 mr-1" />
+                                            {t('common.edit')}
+                                        </Button>
+                                        <Button
+                                            size="sm"
+                                            variant="ghost"
+                                            className="text-xs text-gray-400 hover:text-red-400"
+                                            onClick={() => handleDeleteArtist(artist)}
+                                        >
+                                            <Trash2 className="w-3 h-3 mr-1" />
+                                            {t('common.delete')}
+                                        </Button>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    );
+                        );
                     })
                 )}
             </div>
@@ -241,6 +354,21 @@ export const CatalogPage = () => {
                 preSelectedArtistId={selectedArtistId}
             />
 
+            <EditArtistModal
+                isOpen={!!editingArtist}
+                onClose={() => setEditingArtist(null)}
+                onSuccess={fetchData}
+                artist={editingArtist}
+            />
+
+            <EditAlbumModal
+                isOpen={!!editingAlbum}
+                onClose={() => setEditingAlbum(null)}
+                onSuccess={fetchData}
+                album={editingAlbum}
+                artists={artists}
+            />
+
             <ConfirmationModal
                 isOpen={isBuyModalOpen}
                 onClose={() => setIsBuyModalOpen(false)}
@@ -250,6 +378,30 @@ export const CatalogPage = () => {
                 confirmText={t('modals.confirmButton')}
                 cancelText={t('common.cancel')}
                 isLoading={isBuying}
+            />
+
+            <ConfirmationModal
+                isOpen={isDeleteArtistModalOpen}
+                onClose={() => setIsDeleteArtistModalOpen(false)}
+                onConfirm={confirmDeleteArtist}
+                title={t('modals.confirmDeleteArtistTitle')}
+                message={artistToDelete ? t('modals.confirmDeleteArtistMessage', { name: artistToDelete.name }) : ''}
+                confirmText={t('common.delete')}
+                cancelText={t('common.cancel')}
+                isLoading={isDeleting}
+                variant="danger"
+            />
+
+            <ConfirmationModal
+                isOpen={isDeleteAlbumModalOpen}
+                onClose={() => setIsDeleteAlbumModalOpen(false)}
+                onConfirm={confirmDeleteAlbum}
+                title={t('modals.confirmDeleteAlbumTitle')}
+                message={albumToDelete ? t('modals.confirmDeleteAlbumMessage', { title: albumToDelete.title }) : ''}
+                confirmText={t('common.delete')}
+                cancelText={t('common.cancel')}
+                isLoading={isDeleting}
+                variant="danger"
             />
         </div>
     );

@@ -11,6 +11,7 @@ interface ConfirmationModalProps {
     confirmText?: string;
     cancelText?: string;
     isLoading?: boolean;
+    variant?: 'default' | 'danger';
 }
 
 export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
@@ -21,9 +22,12 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
     message,
     confirmText = 'Confirm',
     cancelText = 'Cancel',
-    isLoading = false
+    isLoading = false,
+    variant = 'default'
 }) => {
     if (!isOpen) return null;
+
+    const isDanger = variant === 'danger';
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
@@ -36,8 +40,10 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
                 </button>
 
                 <div className="flex flex-col items-center text-center mb-6">
-                    <div className="w-12 h-12 rounded-full bg-primary-500/10 flex items-center justify-center mb-4">
-                        <AlertTriangle className="w-6 h-6 text-primary-500" />
+                    <div className={`w-12 h-12 rounded-full flex items-center justify-center mb-4 ${
+                        isDanger ? 'bg-red-500/10' : 'bg-primary-500/10'
+                    }`}>
+                        <AlertTriangle className={`w-6 h-6 ${isDanger ? 'text-red-500' : 'text-primary-500'}`} />
                     </div>
                     <h2 className="text-xl font-bold text-white mb-2">{title}</h2>
                     <p className="text-gray-400 text-sm">{message}</p>
@@ -54,7 +60,7 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
                     </Button>
                     <Button
                         onClick={onConfirm}
-                        className="flex-1"
+                        className={`flex-1 ${isDanger ? 'bg-red-600 hover:bg-red-700' : ''}`}
                         disabled={isLoading}
                     >
                         {isLoading ? 'Processing...' : confirmText}

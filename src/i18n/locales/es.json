@@ -12,7 +12,12 @@
         "price": "Precio",
         "year": "Año",
         "genre": "Género",
-        "country": "País"
+        "country": "País",
+        "save": "Guardar",
+        "edit": "Editar",
+        "delete": "Eliminar",
+        "stock": "Stock",
+        "coverImage": "Imagen de Portada"
     },
     "auth": {
         "loginTitle": "Bienvenido de nuevo",
@@ -45,7 +50,9 @@
         "buyNow": "Comprar Ahora",
         "searchPlaceholder": "Buscar por artista o álbum...",
         "searchResults": "{{count}} artista(s) encontrado(s)",
-        "noResults": "No se encontraron artistas o álbumes que coincidan con tu búsqueda"
+        "noResults": "No se encontraron artistas o álbumes que coincidan con tu búsqueda",
+        "inStock": "en stock",
+        "outOfStock": "Sin stock"
     },
     "orders": {
         "title": "Mis Órdenes",
@@ -74,6 +81,18 @@
         "processing": "Procesando...",
         "orderPlaced": "¡Orden realizada exitosamente!",
         "orderFailed": "Error al realizar la orden",
-        "userIdNotFound": "ID de usuario no encontrado. Por favor inicia sesión nuevamente."
+        "userIdNotFound": "ID de usuario no encontrado. Por favor inicia sesión nuevamente.",
+        "editArtistTitle": "Editar Artista",
+        "editAlbumTitle": "Editar Álbum",
+        "saving": "Guardando...",
+        "artistUpdated": "¡Artista actualizado exitosamente!",
+        "albumUpdated": "¡Álbum actualizado exitosamente!",
+        "leaveEmptyToKeep": "Dejar vacío para mantener la imagen actual",
+        "confirmDeleteArtistTitle": "Eliminar Artista",
+        "confirmDeleteArtistMessage": "¿Estás seguro de que quieres eliminar al artista '{{name}}'? Esto también eliminará todos sus álbumes.",
+        "confirmDeleteAlbumTitle": "Eliminar Álbum",
+        "confirmDeleteAlbumMessage": "¿Estás seguro de que quieres eliminar el álbum '{{title}}'?",
+        "artistDeleted": "¡Artista eliminado exitosamente!",
+        "albumDeleted": "¡Álbum eliminado exitosamente!"
     }
 }

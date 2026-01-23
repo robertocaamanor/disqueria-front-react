@@ -48,22 +48,25 @@ describe('CreateAlbumModal', () => {
         fireEvent.change(screen.getByRole('combobox'), { target: { value: '1' } });
 
         // Fill other fields using inputs finding logic
-        // We know placeholders: 'e.g. Abbey Road', '1969', '0.00', 'e.g. Rock'
         fireEvent.change(screen.getByPlaceholderText('e.g. Abbey Road'), { target: { value: 'New Album' } });
         fireEvent.change(screen.getByPlaceholderText('1969'), { target: { value: '2022' } });
         fireEvent.change(screen.getByPlaceholderText('0.00'), { target: { value: '10' } });
+        fireEvent.change(screen.getByPlaceholderText('0'), { target: { value: '50' } });
         fireEvent.change(screen.getByPlaceholderText('e.g. Rock'), { target: { value: 'Rock' } });
 
         fireEvent.click(screen.getByText('common.create'));
 
         await waitFor(() => {
-            expect(createAlbum).toHaveBeenCalledWith({
-                title: 'New Album',
-                year: 2022,
-                genre: 'Rock',
-                price: 10,
-                artistId: 1
-            });
+            expect(createAlbum).toHaveBeenCalled();
+            const formData = (createAlbum as any).mock.calls[0][0];
+            expect(formData).toBeInstanceOf(FormData);
+            expect(formData.get('title')).toBe('New Album');
+            expect(formData.get('year')).toBe('2022');
+            expect(formData.get('price')).toBe('10');
+            expect(formData.get('stock')).toBe('50');
+            expect(formData.get('artistId')).toBe('1');
+            expect(formData.get('genre')).toBe('Rock');
+
             expect(showToastMock).toHaveBeenCalledWith('modals.albumCreated', 'success');
             expect(defaultProps.onSuccess).toHaveBeenCalled();
             expect(defaultProps.onClose).toHaveBeenCalled();

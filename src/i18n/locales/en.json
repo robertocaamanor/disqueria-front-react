@@ -12,7 +12,12 @@
         "price": "Price",
         "year": "Year",
         "genre": "Genre",
-        "country": "Country"
+        "country": "Country",
+        "save": "Save",
+        "edit": "Edit",
+        "delete": "Delete",
+        "stock": "Stock",
+        "coverImage": "Cover Image"
     },
     "auth": {
         "loginTitle": "Welcome Back",
@@ -45,7 +50,9 @@
         "buyNow": "Buy Now",
         "searchPlaceholder": "Search by artist or album...",
         "searchResults": "{{count}} artist(s) found",
-        "noResults": "No artists or albums match your search"
+        "noResults": "No artists or albums match your search",
+        "inStock": "in stock",
+        "outOfStock": "Out of stock"
     },
     "orders": {
         "title": "My Orders",
@@ -74,6 +81,18 @@
         "processing": "Processing...",
         "orderPlaced": "Order placed successfully!",
         "orderFailed": "Failed to place order",
-        "userIdNotFound": "User ID not found. Please re-login."
+        "userIdNotFound": "User ID not found. Please re-login.",
+        "editArtistTitle": "Edit Artist",
+        "editAlbumTitle": "Edit Album",
+        "saving": "Saving...",
+        "artistUpdated": "Artist updated successfully!",
+        "albumUpdated": "Album updated successfully!",
+        "leaveEmptyToKeep": "Leave empty to keep current image",
+        "confirmDeleteArtistTitle": "Delete Artist",
+        "confirmDeleteArtistMessage": "Are you sure you want to delete the artist '{{name}}'? This will also delete all their albums.",
+        "confirmDeleteAlbumTitle": "Delete Album",
+        "confirmDeleteAlbumMessage": "Are you sure you want to delete the album '{{title}}'?",
+        "artistDeleted": "Artist deleted successfully!",
+        "albumDeleted": "Album deleted successfully!"
     }
 }
