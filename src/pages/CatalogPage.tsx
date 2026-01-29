@@ -283,7 +283,7 @@ export const CatalogPage = () => {
                                                         <div className="flex-shrink-0">
                                                             {album.coverImage ? (
                                                                 <img 
-                                                                    src={`http://localhost:3005/${album.coverImage}`} 
+                                                                    src={`${import.meta.env.VITE_API_URL || 'http://localhost:3005'}/${album.coverImage}`} 
                                                                     alt={album.title}
                                                                     className="w-16 h-16 rounded object-cover"
                                                                 />
