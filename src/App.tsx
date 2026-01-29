@@ -21,10 +21,12 @@ function App() {
               <Route element={<ProtectedRoute />}>
                 <Route path="/catalog" element={<CatalogPage />} />
                 <Route path="/orders" element={<OrdersPage />} />
-                <Route path="/" element={<Navigate to="/catalog" replace />} />
               </Route>
 
-              {/* Catch all redirect to login or catalog */}
+              {/* Redirect root to catalog */}
+              <Route path="/" element={<Navigate to="/catalog" replace />} />
+
+              {/* Catch all redirect to login */}
               <Route path="*" element={<Navigate to="/login" replace />} />
             </Routes>
           </Layout>
