@@ -1,0 +1,7 @@
+name: Disquería Frontend
+description: Aplicación React para gestión de disquería
+
+inputs:
+  - name: VITE_API_URL
+    description: URL del backend API
+    default: http://localhost:3000
